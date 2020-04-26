@@ -1,0 +1,11 @@
+{
+  "Login": {
+  },
+  "Dashboard": {
+    
+  },
+  "Validate": {
+    "001": "{key} must be required",
+    "002": "{key} must be contain letter or number" 
+  }
+}
