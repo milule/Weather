@@ -1,6 +1,6 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { G } from "../../styles/globalStyled";
-import BackgroundSVG from "../../assets/main-bg.png";
+import BackgroundSVG from "../../assets/main-bg.svg";
 import WeatherSVG from "../../assets/weather-bg.svg";
 import {
   Typography,
