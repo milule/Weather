@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { produce } from "immer";
-import {capitalize} from "lodash";
+import { capitalize } from "lodash";
 import { t } from "../../utils";
+import { LoadingInline } from "../../components";
 import { ReactComponent as ProfileIconSVG } from "../../assets/profile.svg";
 import {
   AccountBox,
@@ -21,7 +22,7 @@ import {
 
 function validateForm({ value, error }) {
   const errorForm = {};
-    
+
   Object.keys(error).forEach((k) => {
     if (!value.hasOwnProperty(k)) return;
     errorForm[k] = validateValue(value[k], k);
@@ -38,9 +39,9 @@ function validateValue(value, k) {
 
   if (value.length) {
     value = value.trim();
-    message = !value && t("Validate.002").replace("{key}",  capitalize(k));
+    message = !value && t("Validate.002").replace("{key}", capitalize(k));
   } else {
-    message = t("Validate.001").replace("{key}",  capitalize(k));
+    message = t("Validate.001").replace("{key}", capitalize(k));
   }
 
   return message;
@@ -65,7 +66,7 @@ function Login() {
 
   function handleLoginClick() {
     const { isVaild, errorForm } = validateForm(form);
-    
+
     setForm(
       produce(form, (draft) => {
         draft.error = errorForm;
@@ -73,7 +74,6 @@ function Login() {
     );
 
     if (!isVaild) return;
-    
   }
 
   const UserNameProps = { startAdornment: <UsernameStartAdornment /> };
@@ -129,7 +129,7 @@ function Login() {
             </Link>
           </Box>
           <G.Button fullWidth mode="primary" onClick={handleLoginClick}>
-            Login
+            Login <LoadingInline loading={true} />
           </G.Button>
         </S.Left>
         <S.Right></S.Right>
