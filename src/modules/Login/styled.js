@@ -63,13 +63,13 @@ S.TextField = styled(TextField)`
   width: 100%;
 
   .Mui-focused .MuiSvgIcon-root {
-    color: ${(props) => props.theme.palette.primary.main};
+    color: ${(props) => !props.error && props.theme.palette.primary.main};
   }
 
   .MuiInput-underline:before,
   .MuiInputLabel-root,
   .MuiSvgIcon-root {
-    transition: .5s;
+    transition: .25s;
     border-width: 2px;
     border-color: ${(props) =>
       props.error

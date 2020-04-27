@@ -1,6 +1,8 @@
 import { createMuiTheme } from "@material-ui/core";
 
 export const theme = createMuiTheme({
+  typography: {
+  },
   palette: {
     primary: {
       main: "#2196F3",

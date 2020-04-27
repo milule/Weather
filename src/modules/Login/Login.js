@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { produce } from "immer";
 import {capitalize} from "lodash";
 import { t } from "../../utils";
@@ -53,8 +53,6 @@ function Login() {
     const error = { ...value };
     return { value, error };
   });
-
-  const active = useRef(null);
 
   function handleValueFormChange(e) {
     setForm(
