@@ -1,38 +1,36 @@
+import { produce } from "immer";
 import { AuthType } from "../types";
 
 const initialState = {
   isAuthenticated: false,
   user: null,
   register: null,
-  loading: {}
+  loading: {},
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case AuthType.SET_AUTHENTICATED:
-      return {
-        ...state,
-        isAuthenticated: action.isAuthenticated
-      };
+      return produce(state, (draft) => {
+        draft.isAuthenticated = action.isAuthenticated;
+        draft.user = action.user ? action.user : state.user;
+      });
     case AuthType.LOGIN: {
-      return {
-        ...state,
-        isAuthenticated: true,
-        user: action.user
-      };
+      return produce(state, (draft) => {
+        draft.isAuthenticated = true;
+        draft.user = action.user;
+      });
     }
     case AuthType.LOGOUT: {
-      return {
-        ...state,
-        isAuthenticated: false,
-        user: {}
-      };
+      return produce(state, (draft) => {
+        draft.isAuthenticated = false;
+        draft.user = null;
+      });
     }
     case AuthType.REGISTER: {
-      return {
-        ...state,
-        register: action.register
-      };
+      return produce(state, (draft) => {
+        draft.register = action.register;
+      });
     }
     default:
       return state;

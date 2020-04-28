@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { produce } from "immer";
 import { capitalize } from "lodash";
 import { t } from "../../utils";
-import { LoadingInline } from "../../components";
+import { LoadingInline, LoadingWrapper } from "../../components";
 import { ReactComponent as ProfileIconSVG } from "../../assets/profile.svg";
 import {
   AccountBox,
@@ -92,45 +92,47 @@ function Login() {
     <S.Container>
       <S.Card elevation={8}>
         <S.Left>
-          <ProfileIconSVG width="112" height="112" />
-          <Box marginBottom="1rem">
-            <Typography component="h4" variant="h4">
-              Welcome
-            </Typography>
-          </Box>
-          <S.TextField
-            required
-            id="username"
-            label="Username"
-            margin="normal"
-            InputProps={UserNameProps}
-            error={form.error.username ? true : false}
-            active={form.value.username ? 1 : 0}
-            value={form.value.username}
-            helperText={form.error.username}
-            onChange={handleValueFormChange}
-          ></S.TextField>
-          <S.TextField
-            required
-            id="password"
-            label="Password"
-            margin="dense"
-            type={showPassword ? "text" : "password"}
-            InputProps={PasswordProps}
-            error={form.error.password ? true : false}
-            active={form.value.password ? 1 : 0}
-            value={form.value.password}
-            helperText={form.error.password}
-            onChange={handleValueFormChange}
-          ></S.TextField>
-          <Box width="100%" textAlign="right" marginBottom="2rem">
-            <Link component="a" variant="body2" color="initial">
-              Forgot Password?
-            </Link>
-          </Box>
-          <G.Button fullWidth mode="primary" onClick={handleLoginClick}>
-            Login <LoadingInline loading={true} />
-          </G.Button>
+          <LoadingWrapper loading={true}>
+            <ProfileIconSVG width="112" height="112" />
+            <Box marginBottom="1rem">
+              <Typography component="h4" variant="h4">
+                Welcome
+              </Typography>
+            </Box>
+            <S.TextField
+              required
+              id="username"
+              label="Username"
+              margin="normal"
+              InputProps={UserNameProps}
+              error={form.error.username ? true : false}
+              active={form.value.username ? 1 : 0}
+              value={form.value.username}
+              helperText={form.error.username}
+              onChange={handleValueFormChange}
+            ></S.TextField>
+            <S.TextField
+              required
+              id="password"
+              label="Password"
+              margin="dense"
+              type={showPassword ? "text" : "password"}
+              InputProps={PasswordProps}
+              error={form.error.password ? true : false}
+              active={form.value.password ? 1 : 0}
+              value={form.value.password}
+              helperText={form.error.password}
+              onChange={handleValueFormChange}
+            ></S.TextField>
+            <Box width="100%" textAlign="right" marginBottom="2rem">
+              <Link component="a" variant="body2" color="initial">
+                Forgot Password?
+              </Link>
+            </Box>
+            <G.Button fullWidth mode="primary" onClick={handleLoginClick}>
+              Login <LoadingInline loading={true} />
+            </G.Button>
+          </LoadingWrapper>
         </S.Left>
         <S.Right></S.Right>
       </S.Card>

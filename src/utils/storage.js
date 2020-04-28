@@ -1,19 +1,21 @@
-export const getToken = () => {
+function getToken() {
   return localStorage.getItem("token");
-};
+}
 
-export const getUsername = () => {
+function getUsername() {
   return localStorage.getItem("username");
-};
+}
 
-export const setToken = (token = "") => {
+function setToken(token = "") {
   localStorage.setItem("token", token);
-};
+}
 
-export const setUsername = (name = "") => {
+function setUsername(name = "") {
   localStorage.setItem("username", name);
-};
+}
 
-export const clearStorage = () => {
+function clearStorage() {
   localStorage.clear();
-};
+}
+
+export { getToken, getUsername, setToken, setUsername, clearStorage };

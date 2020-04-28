@@ -1,5 +1,4 @@
 import axios from "axios";
-import qs from "qs";
 import http from "http";
 import https from "https";
 import { toast } from "react-toastify";
@@ -7,47 +6,47 @@ import { axiosEvn } from "../config";
 import { apiConst } from "../constanst";
 import { getToken } from "./storage";
 
+const context = {};
+
 const basicHeader = {
-  "Content-Type": "application/json"
+  "Content-Type": "application/json",
 };
 
 const customHeader = {
-  "Content-Type": "multipart/form-data"
+  "Content-Type": "multipart/form-data",
 };
 
 const config = {
-  // baseUrl: axiosEvn.PROD_API_URL,
-  baseURL: "https://ssdn-simulator.herokuapp.com/", //axiosEvn.DEV_API_URL,
+  baseUrl: axiosEvn.PROD_API_URL,
   responseType: "json",
-  timeout: 10000,
+  timeout: 30000,
   maxContentLength: 5000,
   maxBodyLength: 5000,
   httpAgent: new http.Agent({ keepAlive: true }),
   httpsAgent: new https.Agent({ keepAlive: true }),
   headers: basicHeader,
-  paramsSerializer: params => {
-    return qs.stringify(params, { arrayFormat: "repeat" })
-  }
 };
 
 const instance = axios.create(config);
 
 instance.interceptors.request.use(
-  config => {
-    config.headers["Authorization"] = "Bearer " + getToken();
+  (config) => {
+    config.headers["x-access-token"] = getToken();
     return config;
   },
-  error => {
+  (error) => {
     return Promise.reject(error);
   }
 );
 
 instance.interceptors.response.use(
-  response => {
+  (response) => {
     return mappingResponse(response);
   },
-  error => {
-    return Promise.reject(error);
+  (error) => {
+    processError(error);
+    loggerError(error);
+    return Promise.reject(mappingError(error));
   }
 );
 
@@ -57,15 +56,8 @@ const get = (url, params = {}, cancelToken = null) =>
     .then(({ data }) => {
       return data;
     })
-    .catch(error => {
-      loggerError(error);
-      return {
-        error: true,
-        message: "",
-        data: null,
-        isCancel: axios.isCancel(error)
-      };
-      // return Promise.reject(error);
+    .catch(({ data }) => {
+      return data;
     });
 
 const post = (url, params = {}, cancelToken = null) =>
@@ -74,15 +66,8 @@ const post = (url, params = {}, cancelToken = null) =>
     .then(({ data }) => {
       return data;
     })
-    .catch(error => {
-      loggerError(error);
-      return {
-        error: true,
-        message: "",
-        data: null,
-        isCancel: axios.isCancel(error)
-      };
-      // return Promise.reject(error);
+    .catch(({ data }) => {
+      return data;
     });
 
 const put = (url, params = {}, cancelToken = null) =>
@@ -91,15 +76,8 @@ const put = (url, params = {}, cancelToken = null) =>
     .then(({ data }) => {
       return data;
     })
-    .catch(error => {
-      loggerError(error);
-      return {
-        error: true,
-        message: "",
-        data: null,
-        isCancel: axios.isCancel(error)
-      };
-      // return Promise.reject(error);
+    .catch(({ data }) => {
+      return data;
     });
 
 const remove = (url, params = {}, cancelToken = null) =>
@@ -108,50 +86,67 @@ const remove = (url, params = {}, cancelToken = null) =>
     .then(({ data }) => {
       return data;
     })
-    .catch(error => {
-      loggerError(error);
-      return {
-        error: true,
-        message: "",
-        data: null,
-        isCancel: axios.isCancel(error)
-      };
-      // return Promise.reject(error);
+    .catch(({ data }) => {
+      return data;
     });
 
 const upload = (url, params = {}, cancelToken = null) =>
   instance
     .post(url, params, {
       cancelToken,
-      headers: customHeader
+      headers: customHeader,
     })
     .then(({ data }) => {
       return data;
     })
-    .catch(error => {
-      loggerError(error);
-      return {
-        error: true,
-        message: "",
-        data: null,
-        isCancel: axios.isCancel(error)
-      };
-      // return Promise.reject(error);
+    .catch(({ data }) => {
+      return data;
     });
 
 function mappingResponse(response) {
   let data = response.data;
   if (data.code === apiConst.STATUS.SUCCESS) {
-    data = { ...data, error: false, message: "", data: data.data };
+    data = { error: false, message: "", data: data.data };
   } else {
-    data = { ...data, error: true, message: data.message, data: null };
+    data = { error: true, message: data.message, data: null };
   }
-  return response;
+  return { data };
 }
 
 function mappingError(error) {
-  console.log(Object.keys(error));
-  console.log(error.toJSON());
+  let data;
+  const { response } = error;
+  const { status } = response || {};
+  if (status === 401) {
+    data = {
+      error: true,
+      message: "",
+      data: null,
+      isUnAuth: true,
+      isCancel: axios.isCancel(error),
+    };
+  } else {
+    data = {
+      error: true,
+      message: "",
+      data: null,
+      isUnAuth: false,
+      isCancel: axios.isCancel(error),
+    };
+  }
+  return { data };
+}
+
+function processError(error) {
+  const { response } = error;
+  const { status } = response || {};
+  switch (status) {
+    case 401:
+      context.logout();
+      break;
+    default:
+      break;
+  }
 }
 
 function loggerError(error) {
@@ -167,4 +162,25 @@ function loggerError(error) {
   }
 }
 
-export { get, post, put, remove, upload };
+function createCancelToken() {
+  return axios.CancelToken.source();
+}
+
+const setContextLogout = (logout) => {
+  context.logout = logout;
+};
+
+const setContextLoading = (loading) => {
+  context.loading = loading;
+};
+
+export {
+  get,
+  post,
+  put,
+  remove,
+  upload,
+  setContextLogout,
+  setContextLoading,
+  createCancelToken,
+};
