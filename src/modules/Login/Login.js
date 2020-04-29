@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { produce } from "immer";
 import { capitalize } from "lodash";
 import { t } from "../../utils";
-import { LoadingInline, LoadingWrapper } from "../../components";
+import { LoadingInline } from "../../components";
 import { ReactComponent as ProfileIconSVG } from "../../assets/profile.svg";
 import {
   AccountBox,
@@ -92,7 +92,6 @@ function Login() {
     <S.Container>
       <S.Card elevation={8}>
         <S.Left>
-          <LoadingWrapper loading={true}>
             <ProfileIconSVG width="112" height="112" />
             <Box marginBottom="1rem">
               <Typography component="h4" variant="h4">
@@ -132,7 +131,6 @@ function Login() {
             <G.Button fullWidth mode="primary" onClick={handleLoginClick}>
               Login <LoadingInline loading={true} />
             </G.Button>
-          </LoadingWrapper>
         </S.Left>
         <S.Right></S.Right>
       </S.Card>

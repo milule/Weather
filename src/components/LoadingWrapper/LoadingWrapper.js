@@ -11,7 +11,7 @@ const LoadingWrapper = memo(({ children, loading, color }) => (
   <LoadingContainer loading={loading ? 1 : 0}>
     {loading && (
       <LoadingElement>
-        <LoadingIcon css={override} size={10} margin={2} color={color} />
+        <LoadingIcon css={override} size={35} margin={2} color={color} />
       </LoadingElement>
     )}
     {children}
