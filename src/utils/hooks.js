@@ -1,8 +1,23 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { login, logout, setAuth } from "../redux/actions";
+import { authAction } from "../redux/actions";
 import axios from "axios";
 import io from "socket.io-client";
+
+// For authentication
+export const useAuth = () => {
+  const dispatch = useDispatch();
+  const auth = useSelector(({ auth }) => auth, shallowEqual);
+
+  return {
+    isAuth: auth.isAuth,
+    user: auth.user,
+    setToken: (token) => dispatch(authAction.initToken(token)),
+    setAuth: (isAuth) => dispatch(authAction.setAuth(isAuth)),
+    login: (user) => dispatch(authAction.login(user)),
+    logout: () => dispatch(authAction.logout())
+  };
+};
 
 // For cancel token axios
 export const useCancelToken = () => {
@@ -49,18 +64,4 @@ export const useMounted = () => {
   });
 
   return isMounted.current;
-};
-
-// For authenticated service
-export const useAuth = () => {
-  const dispatch = useDispatch();
-  const auth = useSelector(({ auth }) => auth, shallowEqual);
-
-  return {
-    isAuthenticated: auth.isAuthenticated,
-    user: auth.user,
-    login: (user) => dispatch(login(user)),
-    logout: () => dispatch(logout()),
-    setAuth: (isAuth, user = null) => dispatch(setAuth(isAuth, user)),
-  };
 };

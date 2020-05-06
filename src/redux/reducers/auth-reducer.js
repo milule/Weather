@@ -2,10 +2,10 @@ import { produce } from "immer";
 import { AuthType } from "../types";
 
 const initialState = {
-  isAuthenticated: false,
+  isAuth: false,
+  token: "",
   user: null,
   register: null,
-  loading: {},
 };
 
 const authReducer = (state = initialState, action) => {
@@ -14,6 +14,10 @@ const authReducer = (state = initialState, action) => {
       return produce(state, (draft) => {
         draft.isAuthenticated = action.isAuthenticated;
         draft.user = action.user ? action.user : state.user;
+      });
+    case AuthType.SET_TOKEN:
+      return produce(state, (draft) => {
+        draft.token = action.token;
       });
     case AuthType.LOGIN: {
       return produce(state, (draft) => {
@@ -36,4 +40,5 @@ const authReducer = (state = initialState, action) => {
       return state;
   }
 };
+
 export default authReducer;

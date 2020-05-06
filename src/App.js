@@ -9,6 +9,7 @@ import {
 import { history } from "./config";
 import { theme } from "./styles/theme";
 
+const Auth = React.lazy(() => import("./components/AuthWrapper/AuthWrapper"));
 const Login = React.lazy(() => import("./modules/Login"));
 
 function App() {
@@ -18,14 +19,16 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <React.Suspense fallback={null}>
-            <Router history={history}>
-              <Route
-                exact
-                path="/login"
-                name="Login Page"
-                render={(props) => <Login {...props} />}
-              />
-            </Router>
+            <Auth>
+              <Router history={history}>
+                <Route
+                  exact
+                  path="/login"
+                  name="Login Page"
+                  render={(props) => <Login {...props} />}
+                />
+              </Router>
+            </Auth>
           </React.Suspense>
         </ThemeProvider>
       </StylesProvider>

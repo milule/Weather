@@ -2,7 +2,7 @@ import { post, put } from "../utils/axios";
 import { apiConst } from "../constanst";
 
 const login = ({ username, password }, cancelToken) => {
-  return post(apiConst.URL.LOGIN, { account: username, password }, cancelToken);
+  return post(apiConst.URL.LOGIN, { username, password }, cancelToken);
 };
 
 const logout = cancelToken => {

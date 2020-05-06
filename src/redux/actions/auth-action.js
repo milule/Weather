@@ -1,24 +1,33 @@
 import { AuthType } from "../types";
 import { setToken, clearStorage } from "../../utils";
 
-export const setAuth = (isAuthenticated = false) => (dispatch) => {
-  dispatch({ type: AuthType.SET_AUTHENTICATED, isAuthenticated });
+const setAuth = (isAuth = false) => (dispatch) => {
+  dispatch({ type: AuthType.SET_AUTHENTICATED, isAuth });
 };
 
-export const register = (register) => (dispatch) => {
+const register = (register) => (dispatch) => {
   dispatch({ type: AuthType.REGISTER, register });
 };
 
-export const login = (user = null) => (dispatch) => {
+const login = (user = null) => (dispatch) => {
   if (!user) return;
   dispatch({ type: AuthType.LOGIN, user });
 };
 
-export const logout = () => (dispatch) => {
+const logout = () => (dispatch) => {
   clearStorage();
   dispatch({ type: AuthType.LOGOUT });
 };
 
-export const forceLogout = () => {
-  logout();
+const initToken = (token) => (dispatch) => {
+  setToken(token);
+  dispatch({ type: AuthType.SET_TOKEN, token });
+};
+
+export const authAction = {
+  setAuth,
+  register,
+  login,
+  logout,
+  initToken,
 };

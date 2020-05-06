@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import globalReducer from "./global-reducer";
 import authReducer from "./auth-reducer";
 
 function wrapperReducer(reducerFunction, reducerPredicate) {
@@ -11,6 +12,7 @@ function wrapperReducer(reducerFunction, reducerPredicate) {
 }
 
 const appReducer = combineReducers({
+  global: wrapperReducer(globalReducer, ({ type }) => type.startsWith("GLOBAL_")),
   auth: wrapperReducer(authReducer, ({ type }) => type.startsWith("AUTH_")),
 });
 
