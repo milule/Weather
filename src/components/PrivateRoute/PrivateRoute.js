@@ -24,7 +24,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
 PrivateRoute.propTypes = {
   pathname: PropTypes.string.isRequired,
-  component: PropTypes.oneOfType([PropTypes.node, PropTypes.element]).isRequired,
+  component: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.element,
+    PropTypes.elementType,
+  ]).isRequired,
 };
 
 PrivateRoute.defaultProps = {

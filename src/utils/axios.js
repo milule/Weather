@@ -42,7 +42,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
-    context.loading(response.config.url);
+    processResponse(response);
     return mappingResponse(response);
   },
   (error) => {
@@ -115,6 +115,12 @@ function mappingResponse(response) {
   return { data };
 }
 
+function processResponse(response) {
+  const { config } = response || {};
+
+  context.loading(config.url);
+}
+
 function mappingError(error) {
   let data;
   const { response } = error;
@@ -141,7 +147,10 @@ function mappingError(error) {
 
 function processError(error) {
   const { response } = error;
-  const { status } = response || {};
+  const { status, config } = response || {};
+
+  context.loading(config.url);
+
   switch (status) {
     case 401:
       context.logout();

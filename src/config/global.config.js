@@ -1,7 +1,7 @@
 export const axiosEvn = {
   // config for development env
   DEV_BASE_URL: "http://localhost:4000",
-  DEV_API_URL: "http://localhost:4000",
+  DEV_API_URL: "https://pri-weather.herokuapp.com",
 
   // config for production evn
   PROD_BASE_URL: "http://localhost:4000",

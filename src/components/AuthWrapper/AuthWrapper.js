@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { useTitle } from "react-use";
-import { LoadingWrapper } from "../index";
+import { useMount } from "react-use";
 import { userService } from "../../services";
+import { LoadingWrapper } from "../index";
 import {
   checkToken,
   getToken,
@@ -28,9 +28,7 @@ function AuthWrapper({ children }) {
   const meToken = useCancelToken();
   const isLoading = useMemo(() => loading[userService.effect.me], [loading]);
 
-  useTitle("My Weather");
-
-  useEffect(() => {
+  useMount(async () => {
     async function fetchMe() {
       const rs = await userService.me(meToken);
 
@@ -45,13 +43,13 @@ function AuthWrapper({ children }) {
 
     // check authentication
     if (checkToken()) {
-      fetchMe();
+      await fetchMe();
     } else {
       logout();
     }
 
     setIsNext(true);
-  }, []);
+  });
 
   return isNext && !isLoading ? (
     <>{children}</>
