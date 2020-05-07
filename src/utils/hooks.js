@@ -1,8 +1,19 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { authAction } from "../redux/actions";
+import { authAction, globalAction } from "../redux/actions";
 import axios from "axios";
 import io from "socket.io-client";
+
+// For global state
+export const useGlobal = () => {
+  const dispatch = useDispatch();
+  const global = useSelector(({ global }) => global, shallowEqual);
+
+  return {
+    ...global,
+    setLoading: (effect) => dispatch(globalAction.setLoading(effect))
+  };
+};
 
 // For authentication
 export const useAuth = () => {
@@ -12,10 +23,10 @@ export const useAuth = () => {
   return {
     isAuth: auth.isAuth,
     user: auth.user,
-    setToken: (token) => dispatch(authAction.initToken(token)),
+    initToken: (token) => dispatch(authAction.initToken(token)),
     setAuth: (isAuth) => dispatch(authAction.setAuth(isAuth)),
     login: (user) => dispatch(authAction.login(user)),
-    logout: () => dispatch(authAction.logout())
+    logout: () => dispatch(authAction.logout()),
   };
 };
 
@@ -50,18 +61,4 @@ export const useSocket = () => {
     return () => socket.current && socket.current.close();
   });
   return [socket.current];
-};
-
-// For component is mounted
-export const useMounted = () => {
-  const isMounted = useRef(false);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  });
-
-  return isMounted.current;
 };

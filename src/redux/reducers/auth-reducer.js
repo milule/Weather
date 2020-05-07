@@ -12,7 +12,7 @@ const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case AuthType.SET_AUTHENTICATED:
       return produce(state, (draft) => {
-        draft.isAuthenticated = action.isAuthenticated;
+        draft.isAuth = action.isAuth;
         draft.user = action.user ? action.user : state.user;
       });
     case AuthType.SET_TOKEN:
@@ -21,13 +21,13 @@ const authReducer = (state = initialState, action) => {
       });
     case AuthType.LOGIN: {
       return produce(state, (draft) => {
-        draft.isAuthenticated = true;
+        draft.isAuth = true;
         draft.user = action.user;
       });
     }
     case AuthType.LOGOUT: {
       return produce(state, (draft) => {
-        draft.isAuthenticated = false;
+        draft.isAuth = false;
         draft.user = null;
       });
     }

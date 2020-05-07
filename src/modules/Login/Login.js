@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { Redirect } from "react-router";
 import { produce } from "immer";
 import { capitalize } from "lodash";
-import { t } from "../../utils";
+import { t, useGlobal, useCancelToken, useAuth } from "../../utils";
 import { LoadingInline } from "../../components";
 import { ReactComponent as ProfileIconSVG } from "../../assets/profile.svg";
 import {
@@ -19,6 +20,7 @@ import {
   InputAdornment,
   IconButton,
 } from "./styled";
+import { userService } from "../../services";
 
 function validateForm({ value, error }) {
   const errorForm = {};
@@ -30,7 +32,7 @@ function validateForm({ value, error }) {
 
   return {
     errorForm,
-    isValid: Object.values(errorForm).every((v) => v),
+    isValid: Object.values(errorForm).every((v) => !v),
   };
 }
 
@@ -48,6 +50,7 @@ function validateValue(value, k) {
 }
 
 function Login() {
+
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState(() => {
     const value = { username: "", password: "" };
@@ -55,6 +58,12 @@ function Login() {
     return { value, error };
   });
 
+  const loginToken = useCancelToken();
+  const { loading } = useGlobal();
+  const { initToken, login, isAuth } = useAuth();
+
+  const isLoading = useMemo(() => loading[userService.effect.login], [loading]);
+  
   function handleValueFormChange(e) {
     setForm(
       produce(form, (draft) => {
@@ -64,8 +73,8 @@ function Login() {
     );
   }
 
-  function handleLoginClick() {
-    const { isVaild, errorForm } = validateForm(form);
+  async function handleLoginClick() {
+    const { isValid, errorForm } = validateForm(form);
 
     setForm(
       produce(form, (draft) => {
@@ -73,9 +82,19 @@ function Login() {
       })
     );
 
-    if (!isVaild) return;
+    if (!isValid) return;
+    await fetchLogin();
+  }
 
-    
+  async function fetchLogin() {
+    const rs = await userService.login(form.value, loginToken);
+
+    if (!rs.error && rs.data) {
+      const { token, user } = rs.data;
+      initToken(token);
+      login(user);
+    } else {
+    }
   }
 
   const UserNameProps = { startAdornment: <UsernameStartAdornment /> };
@@ -89,50 +108,52 @@ function Login() {
       />
     ),
   };
+  
+  if (isAuth) return <Redirect push to="/" />;
 
   return (
     <S.Container>
       <S.Card elevation={8}>
         <S.Left>
-            <ProfileIconSVG width="112" height="112" />
-            <Box marginBottom="1rem">
-              <Typography component="h4" variant="h4">
-                Welcome
-              </Typography>
-            </Box>
-            <S.TextField
-              required
-              id="username"
-              label="Username"
-              margin="normal"
-              InputProps={UserNameProps}
-              error={form.error.username ? true : false}
-              active={form.value.username ? 1 : 0}
-              value={form.value.username}
-              helperText={form.error.username}
-              onChange={handleValueFormChange}
-            ></S.TextField>
-            <S.TextField
-              required
-              id="password"
-              label="Password"
-              margin="dense"
-              type={showPassword ? "text" : "password"}
-              InputProps={PasswordProps}
-              error={form.error.password ? true : false}
-              active={form.value.password ? 1 : 0}
-              value={form.value.password}
-              helperText={form.error.password}
-              onChange={handleValueFormChange}
-            ></S.TextField>
-            <Box width="100%" textAlign="right" marginBottom="2rem">
-              <Link component="a" variant="body2" color="initial">
-                Forgot Password?
-              </Link>
-            </Box>
-            <G.Button fullWidth mode="primary" onClick={handleLoginClick}>
-              Login <LoadingInline loading={true} />
-            </G.Button>
+          <ProfileIconSVG width="112" height="112" />
+          <Box marginBottom="1rem">
+            <Typography component="h4" variant="h4">
+              Welcome
+            </Typography>
+          </Box>
+          <S.TextField
+            required
+            id="username"
+            label="Username"
+            margin="normal"
+            InputProps={UserNameProps}
+            error={form.error.username ? true : false}
+            active={form.value.username ? 1 : 0}
+            value={form.value.username}
+            helperText={form.error.username}
+            onChange={handleValueFormChange}
+          ></S.TextField>
+          <S.TextField
+            required
+            id="password"
+            label="Password"
+            margin="dense"
+            type={showPassword ? "text" : "password"}
+            InputProps={PasswordProps}
+            error={form.error.password ? true : false}
+            active={form.value.password ? 1 : 0}
+            value={form.value.password}
+            helperText={form.error.password}
+            onChange={handleValueFormChange}
+          ></S.TextField>
+          <Box width="100%" textAlign="right" marginBottom="2rem">
+            <Link component="a" variant="body2" color="initial">
+              Forgot Password?
+            </Link>
+          </Box>
+          <G.Button fullWidth mode="primary" onClick={handleLoginClick}>
+            Login <LoadingInline loading={isLoading} />
+          </G.Button>
         </S.Left>
         <S.Right></S.Right>
       </S.Card>

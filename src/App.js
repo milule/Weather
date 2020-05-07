@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route } from "react-router";
+import { Router, Route, Redirect } from "react-router";
 import { ThemeProvider } from "styled-components";
 import {
   StylesProvider,
@@ -9,8 +9,10 @@ import {
 import { history } from "./config";
 import { theme } from "./styles/theme";
 
+const Private = React.lazy(() => import("./components/PrivateRoute/PrivateRoute"));
 const Auth = React.lazy(() => import("./components/AuthWrapper/AuthWrapper"));
 const Login = React.lazy(() => import("./modules/Login"));
+const Dashboard = React.lazy(() => import("./modules/Dashboard"));
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
                   name="Login Page"
                   render={(props) => <Login {...props} />}
                 />
+                <Private pathname="/" component={Dashboard} />
+                <Redirect  to="/"/>
               </Router>
             </Auth>
           </React.Suspense>

@@ -6,7 +6,7 @@ import { axiosEvn } from "../config";
 import { apiConst } from "../constanst";
 import { getToken } from "./storage";
 
-const context = {};
+let context = {};
 
 const basicHeader = {
   "Content-Type": "application/json",
@@ -17,7 +17,7 @@ const customHeader = {
 };
 
 const config = {
-  baseUrl: axiosEvn.PROD_API_URL,
+  baseURL: axiosEvn.DEV_API_URL,
   responseType: "json",
   timeout: 30000,
   maxContentLength: 5000,
@@ -31,6 +31,7 @@ const instance = axios.create(config);
 
 instance.interceptors.request.use(
   (config) => {
+    context.loading(config.url);
     config.headers["x-access-token"] = getToken();
     return config;
   },
@@ -41,6 +42,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
+    context.loading(response.config.url);
     return mappingResponse(response);
   },
   (error) => {
@@ -166,21 +168,8 @@ function createCancelToken() {
   return axios.CancelToken.source();
 }
 
-const setContextLogout = (logout) => {
-  context.logout = logout;
+const setContext = (initContext) => {
+  context = initContext;
 };
 
-const setContextLoading = (loading) => {
-  context.loading = loading;
-};
-
-export {
-  get,
-  post,
-  put,
-  remove,
-  upload,
-  setContextLogout,
-  setContextLoading,
-  createCancelToken,
-};
+export { get, post, put, remove, upload, setContext, createCancelToken };
