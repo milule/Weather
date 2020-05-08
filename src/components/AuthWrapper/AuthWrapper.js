@@ -35,6 +35,8 @@ function AuthWrapper({ children }) {
       if (!rs.error && rs.data) {
         login(rs.data);
         initToken(getToken());
+      } else {
+        logout();
       }
     }
 
@@ -44,8 +46,6 @@ function AuthWrapper({ children }) {
     // check authentication
     if (checkToken()) {
       await fetchMe();
-    } else {
-      logout();
     }
 
     setIsNext(true);
