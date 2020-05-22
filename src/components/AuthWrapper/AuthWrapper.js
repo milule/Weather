@@ -7,7 +7,6 @@ import { LoadingWrapper } from "../index";
 import {
   checkToken,
   getToken,
-  setContext,
   useAuth,
   useGlobal,
   useCancelToken,
@@ -22,8 +21,8 @@ S.Container = styled.div`
 
 function AuthWrapper({ children }) {
   const [isNext, setIsNext] = useState(false);
-  const { setLoading, loading } = useGlobal();
   const { login, logout, initToken } = useAuth();
+  const { loading } = useGlobal();
 
   const meToken = useCancelToken();
   const isLoading = useMemo(() => loading[userService.effect.me], [loading]);
@@ -32,16 +31,14 @@ function AuthWrapper({ children }) {
     async function fetchMe() {
       const rs = await userService.me(meToken);
 
-      if (!rs.error && rs.data) {
-        login(rs.data);
-        initToken(getToken());
-      } else {
+      if (rs.error || !rs.data) {
         logout();
+        return;
       }
-    }
 
-    // init context
-    setContext({ loading: setLoading, logout: logout });
+      login(rs.data);
+      initToken(getToken());
+    }
 
     // check authentication
     if (checkToken()) {

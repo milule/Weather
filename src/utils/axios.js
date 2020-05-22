@@ -2,11 +2,15 @@ import axios from "axios";
 import http from "http";
 import https from "https";
 import { toast } from "react-toastify";
-import { axiosEvn } from "../config";
 import { apiConst } from "../constanst";
 import { getToken } from "./storage";
+import { axiosEvn, store } from "../config";
+import { globalAction, authAction } from "../redux/actions";
 
-let context = {};
+const context = {
+  logout: () => store.dispatch(authAction.logout),
+  loading: (effect) => store.dispatch(globalAction.setLoading(effect)),
+};
 
 const basicHeader = {
   "Content-Type": "application/json",
@@ -177,8 +181,4 @@ function createCancelToken() {
   return axios.CancelToken.source();
 }
 
-const setContext = (initContext) => {
-  context = initContext;
-};
-
-export { get, post, put, remove, upload, setContext, createCancelToken };
+export { get, post, put, remove, upload, createCancelToken };
