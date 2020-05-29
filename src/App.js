@@ -1,15 +1,16 @@
 import React from "react";
-import { Router, Route, Redirect } from "react-router";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import {
   StylesProvider,
   MuiThemeProvider,
   CssBaseline,
 } from "@material-ui/core";
-import { history } from "./config";
 import { theme } from "./styles/theme";
 
-const Private = React.lazy(() => import("./components/PrivateRoute/PrivateRoute"));
+const Private = React.lazy(() =>
+  import("./components/PrivateRoute/PrivateRoute")
+);
 const Auth = React.lazy(() => import("./components/AuthWrapper/AuthWrapper"));
 const Login = React.lazy(() => import("./modules/Login"));
 const Dashboard = React.lazy(() => import("./modules/Dashboard"));
@@ -22,7 +23,7 @@ function App() {
           <CssBaseline />
           <React.Suspense fallback={null}>
             <Auth>
-              <Router history={history}>
+              <Switch>
                 <Route
                   exact
                   path="/login"
@@ -30,8 +31,8 @@ function App() {
                   render={(props) => <Login {...props} />}
                 />
                 <Private pathname="/" component={Dashboard} />
-                <Redirect  to="/"/>
-              </Router>
+                <Redirect to="/" />
+              </Switch>
             </Auth>
           </React.Suspense>
         </ThemeProvider>

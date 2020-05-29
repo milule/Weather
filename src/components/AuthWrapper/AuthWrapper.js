@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { BrowserRouter } from "react-router-dom";
 import { useMount } from "react-use";
 import { userService } from "../../services";
 import { LoadingWrapper } from "../index";
@@ -49,7 +50,7 @@ function AuthWrapper({ children }) {
   });
 
   return isNext && !isLoading ? (
-    <>{children}</>
+    <BrowserRouter>{children}</BrowserRouter>
   ) : (
     <S.Container>
       <LoadingWrapper loading={true} />
